@@ -46,7 +46,6 @@
   \item Stateful system
   \item Observer Design Problem
   \item Approaches to solve this problem
-  \item Examples using scilab
   \item How we use it to solve our problems
   \item \textbf{Not} rigorous and \textbf{barely} exhaustive
   \item Should be enough to get started to solve simple problems
@@ -64,10 +63,27 @@
   \begin{itemize}
     \item Movement of cyclones while weather forecasting
     \item Value of a stock in equity market
-    \item Predicting and correcting flight path by it's position
+    \item Predicting and correcting flight path by it's position*
     \item Estimating length of this talk by number of slides
   \end{itemize}
 \end{itemize}
+*Limited to real world flights
+\vskip 1cm
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Slide 3
+\begin{frame}{Unpredictable Systems}
+  \begin{figure} [ht!]
+    \includegraphics[width=110mm]{images/msg1.png}
+  \end{figure}
+\vskip 1cm
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Slide 4
+\begin{frame}{Unpredictable Systems}
+  \begin{figure} [ht!]
+    \includegraphics[width=110mm]{images/msg2.png}
+  \end{figure}
 \vskip 1cm
 \end{frame}
 
@@ -103,24 +119,6 @@
 \vskip 1cm
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Slide 5
-\begin{frame}{..State}
-
-\begin{itemize}
-  \item States for examples from above slides
-  \begin{itemize}
-    \item Position of the eye of the cyclone
-    \item Stock price of a company share in market
-    \item Position of an airplane in sky
-    \item Duration of talk
-  \end{itemize}
-  \item States can be continuous or discrete variables. The above ones are discrete.
-  \item States is what we want to measure precisely, but most of the times we can't
-\end{itemize}
-\vskip 1cm
-\end{frame}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Slide 6
 \begin{frame}{State variables}
@@ -133,7 +131,7 @@
     \item Position of an airplane in sky
     \item Duration of my talk
   \end{itemize}
-  \item States can be continuous or discrete variables. The above ones are discrete.
+  \item States can be continuous or discrete variables.
   \item State is what we want to know, but most of the times we can't measure precisely
 \end{itemize}
 \vskip 1cm
@@ -165,7 +163,7 @@
   \item Linear discrete time invariant process model \[ x_k = Ax_{k-1} + Bu_k + w_{k} \]
   \item \(x_k\) represents current state  \(x_{k-1}\) represents previous state
   \item A is state transition matrix and B is control input matrix \(u_k\) is control input
-  \item \(w_{k}\) is Gaussian process noise (i.e. mean is 0)
+  \item \(w_{k}\) is Gaussian process noise (i.e. mean is 0) with covariance \(Q\)
   \item This equation gives insights how current state and input affects the future state
 \end{itemize}
 \vskip 1cm
@@ -173,11 +171,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Slide 9
 \begin{frame}{Measurement Model}
+\[ y_k = Hx_{k} + v_k \]
 \begin{itemize}
-  \item \[ y_k = Hx_{k} + v_k \]
   \item \(y_k\) is the vector of measurement
-  \item \(H_t\) is the transformation matrix that maps state vector parameters into measurement domain
-  \item \(v_{k}\) is Gaussian measurement noise (i.e. mean is 0)
+  \item \(H\) is the transformation matrix that maps state vector parameters into measurement domain
+  \item \(v_{k}\) is Gaussian measurement noise (i.e. mean is 0) and with covariance \(R\)
   \item This equation describes the relationship between the process state and measurements
 \end{itemize}
 \vskip 1cm
@@ -192,9 +190,9 @@
   \end{figure}
   \item Let state vector \(x_t\) be position and velocity of the train.
     \[
-      X_t = \begin{bmatrix} x_t \\ \dot{x_t} \end{bmatrix}
+      x_t = \begin{bmatrix} x_t \\ \dot{x_t} \end{bmatrix}
     \]
-  \item Train driver by braking or accelerating applies force \(f_t\) for train of mass m
+  \item Train driver by braking or accelerating applies force \(f_t\) for train of mass \(m\)
 \end{itemize}
 \vskip 1cm
 \end{frame}
@@ -226,16 +224,90 @@
     \dfrac{f_t}{m}
   \]
   \item So, by comparing process state equation, we've
-  \[ F_t = \begin{bmatrix} 1 & \Delta t \\ 0 & 1 \end{bmatrix} \]
+  \[ A = \begin{bmatrix} 1 & \Delta t \\ 0 & 1 \end{bmatrix} \]
   and
-  \[ B_t =  \begin{bmatrix} \dfrac{(\Delta t)^2}{2} \\ \Delta t \end{bmatrix} \]
+  \[ B =  \begin{bmatrix} \dfrac{(\Delta t)^2}{2} \\ \Delta t \end{bmatrix} \]
 \end{itemize}
+\vskip 1cm
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Slide 4
+\begin{frame}{Systems difficult to model}
+  \begin{figure} [ht!]
+    \includegraphics[width=110mm]{images/msg3.png}
+  \end{figure}
 \vskip 1cm
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Slide 14
 % Enter kalman
-% Scilab example
+\begin{frame}{Kalman Filter intuition..}
+\begin{itemize}
+  \item Tries to solve general problem of estimation of a state \(x\) of the above form
+  \item Achieves optimality by reducing covariance matrix \(P\)
+  \item \(\hat{x}_k^- \) a priori state estimate at step k given knowledge of process
+  \item \(\hat{x}_k\) posteriori state estimate  at step k given measurement \(y_k\)
+  \item Associated errors:
+    \[ e_k^- = x_k - \hat{x}_k^- \]
+    \[ e_k   = x_k - \hat{x}_k \]
+  \item Associated covariance:
+    \[ P_k^- = E[e_k^-e_k^-T] \]
+    \[ P_k   = E[e_k e_k^T] \]
+\end{itemize}
+\vskip 1cm
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{..Kalman Filter intuition}
+\begin{itemize}
+  \item KF allows us to represent posteriori as linear combination of a priori and weighted difference between actual measurement and measurement prediction.
+   \[
+     \hat{x_k} = \hat{x_k}^- + K (y_k - A\hat{x_k}^-)
+    \]
+   \item \(A\hat{x_k}^-\) is called measurement innovation which reflects discrepancy between predicted measurement and actual measurement
+   \item \(K\) is the Kalman gain. Designed to minimize posteriori error covariance.
+   \item As measurement prediction is closer to actual/true measurement, the less we change our posteriori state
+\end{itemize}
+\vskip 1cm
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{..Kalman Filter intuition}
+\begin{itemize}
+   \item Kalman gain \(K\) is given by:
+     \[  
+        K_k = \dfrac{P_k^- A^T}{(AP_k^-A^T + R)}
+         \]
+  \item As \(R\) tends to zero, i.e. K tends to increase.
+  \item Implies KF trusts our actual measurement more because of low noise 
+  \item As \(P_k^-\) tends to zero, K tends to zero as well
+  \item Implies KF trusts our predicted measurement more because error in state estimates are reduced
+\end{itemize}
+\vskip 1cm
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{..Kalman Filter intuition}
+\begin{itemize}
+  \item Kalman Filter works in two steps. Prediction and Correction.
+  \begin{figure} [ht!]
+    \includegraphics[width=60mm]{images/predictcorrect.png}
+  \end{figure}
+  \item In prediction step a prioris are calculated
+  \item In correction step, gain is computed initially, and then combined with measurement to compute posteriori
+\end{itemize}
+\vskip 1cm
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{..Kalman Filter intuition}
+\begin{figure} [ht!]
+    \includegraphics[width=100mm]{images/predictcorrectequations.png}
+\end{figure}
+We do this as many times we like OR till we see \textbf{convergence}
+\vskip 1cm
+\end{frame}
+
+% Scilab example (play around with variables)
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Slide 15
 % What we do
@@ -289,7 +361,7 @@
 \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Slide 17
+% Slide 18
 \begin{frame}{..What we do}
 \begin{itemize}
   \item Idea is to exploit relationship between RSSI and distance between person and router
@@ -301,27 +373,82 @@
 \vskip 1cm
 \end{frame}
 
-
-% Problems we face
-% How we used kalman filter
-% What is FKF
-% Results
-% Problems using Kalman filter
-% Summary
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Slide 19
+\begin{frame}{Fingerprinting}
+\begin{itemize}
+  \item Fingerprinting tries to locate an user to nearest "mapped" place
+  \item Takes noise into account since it is a statistical approach
+  \item We applied FKF (Fingerprint Kalman Filter) to it to enhance results
+  \item Our state was a position vector in 2D
+  \item Measurement vector was RSSI from WiFi access points
+\end{itemize}
+\vskip 1cm
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Slide 20
+\begin{frame}{Fingerprinting Kalman Filter}
+\begin{figure} [ht!]
+  \includegraphics[width=100mm]{images/kalmansimulated.jpg}
+\end{figure}
+\begin{itemize}
+  \item Run using simulated \textit{mapping} data and live readings
+  \item Size of grid is 1x1 sq m
+  \item Mean accuracy achieved was up to 500mm
+\end{itemize}
+\vskip 1cm
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Slide 21
+\begin{frame}{Issues with FKF}
+\begin{itemize}
+  \item On real data, mean accuracy was reduced to 2m
+  \item Primary reasons were:
+    \begin{itemize}
+      \item Requires RSSI readings from all access points
+      \item Doesn't work for places where there is no mapping data(area of positioning has to be a bounded region)
+    \end{itemize}
+    \begin{figure} [ht!]
+      \includegraphics[width=100mm]{images/kalmanwithoutmapping.jpg}
+    \end{figure}
+   
+\end{itemize}
+\vskip 1cm
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Slide 4
+\begin{frame}{Issues with FKF | Tracking super humans}
+  \begin{figure} [ht!]
+    \includegraphics[width=110mm]{images/msg5.png}
+  \end{figure}
+\vskip 1cm
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Slide 22
+\begin{frame}{Experience with Kalman Filter}
+\begin{itemize}
+  \item Hard to debug when it goes wrong
+  \item Ideal for fusing sensor data (Dead reckoning systems)
+  \item Accelerometer, Gyroscopes and magnetometer fused with WiFi based positioning
+  \item Linear discrete time KF works badly when the sigma of the measurement is too high
+  \item Computationally intensive. Each measurement update is run for n times. More the n more likely KF will converge(error will reduce)
+\end{itemize}
+\vskip 1cm
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Slide 10
 \begin{frame}{References/Links}
 
 \begin{itemize}
-  \item Source code \url{https://github.com/gnu-sandhi/sandhi.git}
-  \item Documentation \url{https://github.com/gnu-sandhi/docs.git}
-  \item Problems using it? Found a bug?
-  \begin{itemize}
- 	\item Are you sure its a bug and \textbf{not} \textit{a feature}?
-	\item Raise an issue on our github
-	\item Mailing List: \textit{gnu\_lc@googlegroups.com}
-  \end{itemize}
+  \item SIGGRAPH 2001, Course 8, Greg Welch and Gary Bishop, NCU
+  \item FKF in Indoor Positioning Applications, July 2009, Simo ALI-LÖYTTY, Tommi PERÄLÄ, University of Finland
+  \item Understanding Basics of Kalman Filter, Lecture Notes, Ramsey Faragher
+  \item Scilab \textit{kalm} https://help.scilab.org/docs/5.4.1/en\_US/kalm.html
+  \item "MSG Messenger of God" 2014 youtube, Dr. Gurmeet Ram Rahim ji Insaan
+  \item "Hind ka Napak ko Jawab MSG Lionheart" 2016 youtube, Dr. Gurmeet Ram Rahim ji Insaan
+  \item Slides on github: http://github.com/manojgudi/
+  \item manoj@getfocus.in
 \end{itemize}
 
 \vskip 1cm
